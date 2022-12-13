@@ -1,0 +1,73 @@
+[app]
+    httpPort = 80
+    runMode = "debug"
+    readTimeout = "10s"
+    writeTimeout = "10s"
+
+[Auth]
+    signKey="3d"
+	expireTime = 1440
+ 	maxTimeOut = 10
+ 
+[log]
+    dir = "logs/"
+    stdout = true
+
+[mysql]
+    [mysql.conninfo]
+        addr = "127.0.0.1:3306"
+        dsn = "root:123456@tcp(127.0.0.1:3306)/human?timeout=5s&readTimeout=5s&writeTimeout=5s&parseTime=true&loc=Local&charset=utf8,utf8mb4"
+        readDSN = ["root:123456@tcp(127.0.0.1:3306)/human?timeout=5s&readTimeout=5s&writeTimeout=5s&parseTime=true&loc=Local&charset=utf8,utf8mb4"]
+        active = 5
+        idle = 2
+        idleTimeout = "4h"
+        queryTimeout = "1s"
+        execTimeout = "1s"
+        tranTimeout = "2s"
+
+[redis]
+	addr = "127.0.0.1:6379"
+	idle = 10
+	active = 10
+	dialTimeout = "1s"
+	readTimeout = "500ms"
+	writeTimeout = "1s"
+	idleTimeout = "10s"
+
+[httpClient]
+    [httpClient.in3d]
+         getaddr = "https://api.developer.in3d.io/scans/"
+         uploadStartAddr = "https://app.gsize.io/v2/scans/upload_start/"
+         uploadDoneAddr = "https://app.gsize.io/v2/scans/upload_done/"
+         runAddr = "https://app.gsize.io/v2/scans/run/"
+         [httpClient.in3d.clientConf]
+            maxTotal = 10
+            maxPerHost  = 10
+            keepAlive = "5s"
+            dialTimeout = "1s"
+            timeout = "1s"
+           [httpClient.in3d.clientConf.breaker]
+                namespace = "in3d"
+                timeout = "3s"
+                maxConcurrentRequests = 5
+                requestVolumeThreshold= 1
+                sleepWindow = "5s"
+                errorPercentThreshold = 50
+    [httpClient.aspose]
+         getaddr = "https://api.products.aspose.app/3d/api/v2/job-state/"         
+         uploadStartAddr = "https://api.products.aspose.app/3d/api/v2/file/"
+         uploadDoneAddr = ""
+         runAddr="https://api.products.aspose.app/3d/api/v2/conversion"
+         [httpClient.aspose.clientConf]
+            maxTotal = 10
+            maxPerHost  = 10
+            keepAlive = "5s"
+            dialTimeout = "1s"
+            timeout = "1s"
+           [httpClient.aspose.clientConf.breaker]
+                namespace = "aspose"
+                timeout = "3s"
+                maxConcurrentRequests = 5
+                requestVolumeThreshold= 1
+                sleepWindow = "5s"
+                errorPercentThreshold = 50     

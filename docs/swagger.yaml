@@ -1,0 +1,221 @@
+definitions:
+  render.JSON:
+    properties:
+      code:
+        description: 业务错误码
+        type: integer
+      data:
+        description: 响应数据
+      msg:
+        description: 错误描述
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/GetUserScanInfo:
+    get:
+      parameters:
+      - description: 登录token
+        in: header
+        name: jwt
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/render.JSON'
+      summary: 获取用户信息
+  /api/getcode:
+    post:
+      parameters:
+      - description: 用户名（邮箱）
+        in: query
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/render.JSON'
+      summary: 获取注册码
+  /api/getid:
+    post:
+      parameters:
+      - description: 登录token
+        in: header
+        name: jwt
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/render.JSON'
+      summary: 获取in3d访问id
+  /api/getscan:
+    get:
+      parameters:
+      - description: 登录token
+        in: header
+        name: jwt
+        required: true
+        type: string
+      - description: in3d访问id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/render.JSON'
+      summary: 获取in3d扫描
+  /api/getscanResult:
+    get:
+      parameters:
+      - description: 登录token
+        in: header
+        name: jwt
+        required: true
+        type: string
+      - description: in3d访问id
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/render.JSON'
+      summary: 获取in3d扫描结果
+  /api/getuserModel:
+    get:
+      parameters:
+      - description: 登录token
+        in: header
+        name: jwt
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/render.JSON'
+      summary: 获取用户模型列表
+  /api/login:
+    post:
+      parameters:
+      - description: 用户名
+        in: query
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: query
+        name: password
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/render.JSON'
+      summary: 登录
+  /api/register:
+    post:
+      parameters:
+      - description: 用户名
+        in: query
+        name: username
+        required: true
+        type: string
+      - description: 密码
+        in: query
+        name: password
+        required: true
+        type: string
+      - description: 注册码
+        in: query
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/render.JSON'
+      summary: 注册
+  /api/resetPassword:
+    post:
+      parameters:
+      - description: 用户名（邮箱）
+        in: query
+        name: username
+        required: true
+        type: string
+      - description: 新密码
+        in: query
+        name: password
+        required: true
+        type: string
+      - description: 验证码
+        in: query
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/render.JSON'
+      summary: 修改密码
+  /api/upload:
+    put:
+      parameters:
+      - description: 登录token
+        in: header
+        name: jwt
+        required: true
+        type: string
+      - description: in3d访问id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: file
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/render.JSON'
+      summary: 上传文件
+swagger: "2.0"
