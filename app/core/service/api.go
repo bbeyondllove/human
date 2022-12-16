@@ -134,7 +134,7 @@ func (s *Service) Upload(ctx context.Context, bearer string, user_id int64, id s
 	}
 	lstid, serr := s.dao.AddScan(ctx, scan)
 	if serr != nil {
-		return "", serr
+		return nil, serr
 	}
 
 	fields := make(map[string]string, 0)
@@ -142,7 +142,7 @@ func (s *Service) Upload(ctx context.Context, bearer string, user_id int64, id s
 	where["id"] = strconv.Itoa(int(lstid))
 	res, err := s.dao.In3dClient.Upload(http.MethodPost, bearer, id, filename, starturl, doneurl, runurl)
 	fmt.Printf("response Body:%+v\n", res)
-	if err != nil || res == "" {
+	if err != nil || res == nil {
 		log.Error("In3dClient.Upload(%s %s %s) error(%v)", starturl, doneurl, runurl, err)
 		fields["status"] = "2"
 		s.dao.UpdateScan(ctx, fields, where)

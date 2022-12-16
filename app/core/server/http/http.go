@@ -54,8 +54,8 @@ func New(c *conf.Config, s *service.Service) (httpSrv *http.Server) {
 
 func route(e *gin.Engine) {
 	e.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	downdir := conf.ConfPath + "/tran/"
-	e.StaticFS("/tran", gin.Dir(downdir, true))
+	downdir := conf.ConfPath + "/model"
+	e.StaticFS("/model", gin.Dir(downdir, true))
 
 	api := e.Group("/api")
 

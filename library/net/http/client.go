@@ -260,37 +260,36 @@ func createReqBody(fileName string, field map[string]string) (string, io.Reader,
 }
 
 // UploadFile 上传文件 rURL为第三方接口url,b为文件内容,header为自定义header头
-func (client *Client) Upload(method string, token string, id string, filename string, starturl, doneurl, runurl string) (string, error) {
+func (client *Client) Upload(method string, token string, id string, filename string, starturl, doneurl, runurl string) (interface{}, error) {
 	//获取上传url
 	postret, posterr := client.ReqData(method, starturl, nil, token)
 	if posterr != nil {
-		return "", posterr
+		return nil, posterr
 	}
 
-	fmt.Printf("ret:%s\n", postret)
+	log.Info("Upload ReqData return :%s\n", postret)
 	retMap := make(map[string]interface{}, 0)
 	posterr = json.Unmarshal([]byte(postret), &retMap)
 	if posterr != nil {
-		return "", posterr
+		return nil, posterr
 	}
 
-	fmt.Printf("ret map:%s\n", retMap)
 	if retMap["method"] == nil || retMap["url"] == nil {
-		return "", posterr
+		return retMap, posterr
 	}
 	reqMethod := retMap["method"].(string)
 	reqUrl := retMap["url"].(string)
 
-	//上传文件
+	//上传文件nil
 	contType, reader, err := createReqBody(filename, nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	req, err := http.NewRequest(reqMethod, reqUrl, reader)
 	// add headers
 	req.Header.Set("Content-Type", contType)
-	connectTimeout := 120 * time.Second
+	connectTimeout := 600 * time.Second
 	readWriteTimeout := 5184000 * time.Millisecond
 	cli := http.Client{
 		//忽略证书验证
@@ -304,18 +303,19 @@ func (client *Client) Upload(method string, token string, id string, filename st
 
 	resp, err := cli.Do(req)
 	if err != nil || resp == nil {
-		return "", err
+		return nil, err
 	}
 	defer resp.Body.Close()
-
 	etag := resp.Header["Etag"]
-	log.Info("upload etag=%s\n", etag)
-
+	log.Info("upload Etag=%v\n", etag)
+	if etag==nil || len(etag)==0{
+		return nil, nil
+	}
+	
 	//调用upload done接口
 	doneurl = doneurl + etag[0]
 	go client.done_run(method, doneurl, runurl, token)
-
-	return etag[0], nil
+	return retMap, nil
 }
 
 func (client *Client) done_run(method string, doneurl, runurl string, token string) {

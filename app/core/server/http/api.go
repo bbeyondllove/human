@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/json"
 	"human/app/core/model"
 	"human/library/ecode"
 	"human/library/log"
@@ -176,7 +177,8 @@ func GetId(c *gin.Context) {
 	Authorization := c.Request.Header.Get("bearer")
 	userid := c.Request.Header.Get("userid")
 	ret, err := srv.GetId(c, Authorization, userid)
-	r.JSON(ret, err)
+	b := json.RawMessage([]byte(ret.(string)))
+	r.JSON(b, err)
 }
 
 // @Summary 获取in3d扫描
@@ -267,11 +269,19 @@ func UploadFile(c *gin.Context) {
 		return
 	}
 
-	ret, reterr := "上传成功", err
-	log.Info("Upload  %s %d %d %s", Authorization, user_id, id, destdir+filename)
-	//ret, reterr := srv.Upload(c, Authorization, user_id, id, destdir+filename)
-	log.Info("Upload  ret %v", ret)
-	r.JSON(ret, reterr)
+	//ret, reterr := "上传成功", err
+	//log.Info("Upload  %s %d %d %s", Authorization, user_id, id, destdir+filename)
+	ret, reterr := srv.Upload(c, Authorization, user_id, id, destdir+filename)
+	log.Info("Upload  ret [%v]%v", reterr, ret)
+	if ret == nil {
+		r.JSON(nil, reterr)
+		return
+	}
+
+	buf, _ := json.Marshal(ret)
+	b := json.RawMessage(buf)
+	r.JSON(b, reterr)
+
 }
 
 // @Summary 获取用户信息
